@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/auth', [LoginController::class, 'redirectToProvider']);
+Route::get('/auth/callback', [LoginController::class, 'handleProviderCallback']);
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/', function () {
     return view('welcome');
