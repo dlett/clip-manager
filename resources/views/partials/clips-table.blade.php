@@ -37,6 +37,7 @@
         <th>Title</th>
         <th>Curator</th>
         <th>Game</th>
+        <th>Created</th>
     </tr>
     </thead>
     <tbody>
@@ -52,6 +53,11 @@
             </td>
             <td class="align-middle"><a
                     href="{{ route('home', array_merge(request()->except('page'), ['game' => $clip->game])) }}">{{ $clip->game }}</a>
+            </td>
+            <td class="align-middle">
+                <span data-toggle="tooltip" data-placement="top" title="{{ $clip->created_at->format('Y-m-d g:i:s A') }}">
+                    {{ $clip->created_at->diffForHumans() }}
+                </span>
             </td>
         </tr>
     @endforeach
