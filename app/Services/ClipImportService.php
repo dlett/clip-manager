@@ -70,6 +70,10 @@ class ClipImportService
 
     public function importClip(string $slug, string $videoFilePath)
     {
+        if (Clip::query()->where('slug', $slug)->exists()) {
+            return;
+        }
+
         $clipData = $this->clipRepository->getClip($slug);
 
         $thumbnailMedium = $this->moveThumbnailToStorage($clipData['thumbnails']['medium']);
