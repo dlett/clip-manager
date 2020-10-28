@@ -9,7 +9,7 @@ class ClipController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Clip::query()->with(['curator']);
+        $query = Clip::query()->with(['curator'])->orderBy('created_at', 'desc');
 
         if ($request->has('game') && strlen($request->input('game')) > 0) {
             $query->where('game', urldecode($request->input('game')));
