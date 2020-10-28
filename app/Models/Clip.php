@@ -46,4 +46,11 @@ class Clip extends Model
     {
         return Storage::disk($this->video_file_disk)->url($this->video_file_path);
     }
+
+    public static function getGames()
+    {
+        return static::query()->groupBy('game')->select('game')->get()->map(function ($clip) {
+            return $clip->game;
+        })->filter()->values();
+    }
 }

@@ -7,12 +7,10 @@
 </head>
 <body style="height: 100%; width: 100%;">
     <div style="width: 100%; height: 100%; padding-top: 300px;" class="text-center">
-
-        <span class="align-middle">
-            <a href="{{ route('login') }}" style="color: #6441a5;">
-                <img src="/img/TwitchGlitchPurple.png" width="32" height="32" alt="Twitch Logo"> Login with Twitch
-            </a>
-        </span>
+        <h1 class="mb-5">{{ config('app.name') }}</h1>
+        <a href="{{ route('login') }}" style="color: #6441a5;">
+            <img src="/img/TwitchGlitchPurple.png" width="32" height="32" alt="Twitch Logo"> Login with Twitch
+        </a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
