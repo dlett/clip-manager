@@ -11,6 +11,7 @@ use App\Models\Curator;
 use App\Repositories\ClipRepository;
 use Carbon\Carbon;
 use Exception;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -126,12 +127,13 @@ class ClipImportService
         return $broadcaster;
     }
 
-    protected function moveThumbnailToStorage(string $url): ?string
+    public function moveThumbnailToStorage(string $url): ?string
     {
         try {
-            $contents = file_get_contents($url);
+            $response = (new Client())->get($url);
             $name = substr($url, strrpos($url, '/') + 1);
             $path = sprintf('%s%s', self::THUMBNAILS_DIRECTORY, $name);
+            $contents = $response->getBody()->getContents();
 
             Storage::disk('s3')->put($path, $contents, 'public');
 
@@ -153,7 +155,7 @@ class ClipImportService
 
         Storage::disk('s3')->put($path, $contents, 'public');
 
-        return Storage::disk('s3')->url($path);
+        return $path;
     }
 
     protected function getClipUrlFromThumbnail($thumbnailUrl): string
