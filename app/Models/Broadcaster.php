@@ -12,6 +12,7 @@ class Broadcaster extends Model
         'display_name',
         'channel_url',
         'logo_url',
+        'twitch_id'
     ];
 
     public function clips(): HasMany

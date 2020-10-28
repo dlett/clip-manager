@@ -17,7 +17,7 @@ abstract class AbstractTwitchRepository
     protected function client()
     {
         return new Client([
-            'base_uri' => 'https://api.twitch.tv/kraken/',
+            'base_uri' => 'https://api.twitch.tv/',
             'headers' => [
                 'Accept' => 'application/vnd.twitchtv.v5+json',
                 'Client-ID' => $this->clientId

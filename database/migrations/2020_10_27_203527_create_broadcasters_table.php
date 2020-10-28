@@ -16,6 +16,7 @@ class CreateBroadcastersTable extends Migration
         Schema::create('broadcasters', function (Blueprint $table) {
             $table->id();
             $table->string('name')->index();
+            $table->string('twitch_id');
             $table->string('display_name');
             $table->string('channel_url');
             $table->string('logo_url');
