@@ -17,7 +17,7 @@
             <tr>
                 <td><img src="{{ $clip->thumbnail_tiny }}" alt="Thumbnail for {{ $clip->title }}"></td>
                 <td>{{ $clip->title }}</td>
-                <td><a href="{{ route('curator.show', $clip->curator->id) }}">{{ $clip->curator->display_name }}</a></td>
+                <td><a href="{{ route('curator.show', $clip->curator) }}">{{ $clip->curator->display_name }}</a></td>
                 <td>{{ $clip->game }}</td>
                 <td><a href="{{ route('clip.show', $clip) }}">View</a></td>
             </tr>

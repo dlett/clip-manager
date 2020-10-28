@@ -18,4 +18,9 @@ class Broadcaster extends Model
     {
         return $this->hasMany(Clip::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
 }
