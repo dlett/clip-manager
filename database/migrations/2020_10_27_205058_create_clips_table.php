@@ -16,6 +16,7 @@ class CreateClipsTable extends Migration
         Schema::create('clips', function (Blueprint $table) {
             $table->id();
             $table->foreignId('curator_id');
+            $table->foreignId('broadcaster_id');
             $table->string('slug');
             $table->string('game');
             $table->string('broadcast_id');
@@ -28,6 +29,7 @@ class CreateClipsTable extends Migration
             $table->string('video_file_path');
             $table->timestamps();
             $table->foreign('curator_id')->references('id')->on('curators');
+            $table->foreign('broadcaster_id')->references('id')->on('broadcasters');
         });
     }
 

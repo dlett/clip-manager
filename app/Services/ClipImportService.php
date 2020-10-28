@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Broadcaster;
 use App\Models\Clip;
 use App\Models\Curator;
 use App\Repositories\ClipRepository;
@@ -27,6 +28,7 @@ class ClipImportService
         $thumbnailTiny = $this->moveThumbnailToStorage($clipData['thumbnails']['tiny']);
 
         $curator = $this->findOrCreateCurator($clipData['curator']);
+        $broadcaster = $this->findOrCreateBroadcaster($clipData['broadcaster']);
 
         $clip = new Clip([
             'slug' => $clipData['slug'],
@@ -42,6 +44,7 @@ class ClipImportService
             'video_file_path' => Storage::disk('s3')->url($videoFilePath),
         ]);
         $clip->curator()->associate($curator);
+        $clip->broadcaster()->associate($broadcaster);
         $clip->save();
     }
 
@@ -53,6 +56,17 @@ class ClipImportService
         ], [
             'channel_url' => $curator['channel_url'],
             'logo_url' => $curator['logo'],
+        ]);
+    }
+
+    protected function findOrCreateBroadcaster(array $broadcaster): Broadcaster
+    {
+        return Broadcaster::query()->firstOrCreate([
+            'name' => $broadcaster['name'],
+            'display_name' => $broadcaster['display_name'],
+        ], [
+            'channel_url' => $broadcaster['channel_url'],
+            'logo_url' => $broadcaster['logo'],
         ]);
     }
 

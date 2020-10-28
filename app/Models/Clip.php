@@ -26,6 +26,11 @@ class Clip extends Model
         return $this->belongsTo(Curator::class);
     }
 
+    public function broadcaster(): BelongsTo
+    {
+        return $this->belongsTo(Broadcaster::class);
+    }
+
     public function getRouteKeyName()
     {
         return 'slug';

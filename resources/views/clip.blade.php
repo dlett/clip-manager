@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+    {{ $clip->title }} -
+@endsection
+
 @section('content')
     <div class="col-12">
         <h1>{{ $clip->title }}</h1>
