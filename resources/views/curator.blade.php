@@ -35,16 +35,19 @@
 @endsection
 
 @section('content')
-    <div class="col-4">
+    <div class="col-3">
         <div class="card">
             <img src="{{ $curator->logo_url }}" alt="John" style="width:100%">
-            <h1>{{ $curator->display_name }}</h1>
+            <h4 class="pt-3">{{ $curator->display_name }}</h4>
             <p class="title">{{ $count = $curator->clips()->count() }} {{ \Illuminate\Support\Str::plural('clip', $count) }} created</p>
-            <p><a href="{{ $curator->channel_url }}" class="channel-button">Twitch Profile</a></p>
+
+            <div class="card-footer channel-button">
+                <a href="{{ $curator->channel_url }}" class="card-footer channel-button">Twitch Profile</a>
+            </div>
         </div>
     </div>
 
-    <div class="col-8">
+    <div class="col-9">
         @include('partials.clips-table')
     </div>
 @endsection

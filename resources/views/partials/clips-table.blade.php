@@ -48,7 +48,9 @@
                     alt="Thumbnail for {{ $clip->title }}"></a></td>
             <td class="align-middle"><a href="{{ route('clip.show', $clip) }}">{{ $clip->title }}</a></td>
             <td class="align-middle">
-                <img src="{{ $clip->curator->logo_url }}" height="32">
+                @if(Route::currentRouteName() === 'home')
+                    <img src="{{ $clip->curator->logo_url }}" height="32">
+                @endif
                 <a href="{{ route('curator.show', $clip->curator) }}">{{ $clip->curator->display_name }}</a>
             </td>
             <td class="align-middle"><a
