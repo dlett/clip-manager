@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CuratorController;
+use App\Http\Controllers\ClipController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,10 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/auth', [LoginController::class, 'redirectToProvider']);
+Route::get('/auth', [LoginController::class, 'redirectToProvider'])->name('login');
 Route::get('/auth/callback', [LoginController::class, 'handleProviderCallback']);
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/clips', [ClipController::class, 'index'])->name('home');
+    Route::get('/clips/{clip}', [ClipController::class, 'show'])->name('clip.show');
+    Route::get('/curator/{curator}', [CuratorController::class, 'show'])->name('curator.show');
+});
 
 Route::get('/', function () {
     return view('welcome');
