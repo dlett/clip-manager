@@ -11,6 +11,8 @@ use App\Models\Curator;
 use App\Repositories\ClipRepository;
 use Carbon\Carbon;
 use Exception;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 class ClipImportService
@@ -62,7 +64,7 @@ class ClipImportService
     {
         $videoPath = $this->moveVideoToStorage($this->getClipUrlFromThumbnail($clip['thumbnail_url']));
 
-        $this->importClip($clip['slug'], $videoPath);
+        $this->importClip($clip['id'], $videoPath);
     }
 
     public function importClip(string $slug, string $videoFilePath)
@@ -87,7 +89,8 @@ class ClipImportService
             'thumbnail_small' => $thumbnailSmall,
             'thumbnail_tiny' => $thumbnailTiny,
             'created_at' => $clipData['created_at'],
-            'video_file_path' => Storage::disk('s3')->url($videoFilePath),
+            'video_file_disk' => 's3',
+            'video_file_path' => $videoFilePath,
         ]);
         $clip->curator()->associate($curator);
         $clip->broadcaster()->associate($broadcaster);
@@ -105,27 +108,41 @@ class ClipImportService
         ]);
     }
 
-    protected function findOrCreateBroadcaster(array $broadcaster): Broadcaster
+    protected function findOrCreateBroadcaster(array $data): Broadcaster
     {
-        return Broadcaster::query()->firstOrCreate([
-            'twitch_id' => $broadcaster['id'],
-            'name' => $broadcaster['name'],
-            'display_name' => $broadcaster['display_name'],
+        $broadcaster = Broadcaster::query()->firstOrCreate([
+            'twitch_id' => $data['id'],
         ], [
-            'channel_url' => $broadcaster['channel_url'],
-            'logo_url' => $broadcaster['logo'],
+            'name' => $data['name'],
+            'display_name' => $data['display_name'],
+            'channel_url' => $data['channel_url'],
+            'logo_url' => $data['logo'],
         ]);
+
+        if (is_null($broadcaster->channel_url) && !is_null($data['channel_url'])) {
+            $broadcaster->update(['channel_url' => $data['channel_url']]);
+        }
+
+        return $broadcaster;
     }
 
-    protected function moveThumbnailToStorage(string $url): string
+    protected function moveThumbnailToStorage(string $url): ?string
     {
-        $contents = file_get_contents($url);
-        $name = substr($url, strrpos($url, '/') + 1);
-        $path = sprintf('%s%s', self::THUMBNAILS_DIRECTORY, $name);
+        try {
+            $contents = file_get_contents($url);
+            $name = substr($url, strrpos($url, '/') + 1);
+            $path = sprintf('%s%s', self::THUMBNAILS_DIRECTORY, $name);
 
-        Storage::disk('s3')->put($path, $contents, 'public');
+            Storage::disk('s3')->put($path, $contents, 'public');
 
-        return Storage::disk('s3')->url($path);
+            return Storage::disk('s3')->url($path);
+        } catch (ClientException $clientException) {
+            // Forbidden in this case usually means the thumbnail just does not exist.
+            if ($clientException->getResponse()->getStatusCode() === Response::HTTP_FORBIDDEN) {
+                return null;
+            }
+            throw $clientException;
+        }
     }
 
     protected function moveVideoToStorage(string $url): string

@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Clip extends Model
 {
+    protected $appends = [
+        'video_url'
+    ];
+
     protected $fillable = [
         'slug',
         'game',
@@ -18,6 +23,7 @@ class Clip extends Model
         'thumbnail_small',
         'thumbnail_tiny',
         'video_file_path',
+        'video_file_disk',
         'created_at', // fillable for import.
     ];
 
@@ -34,5 +40,10 @@ class Clip extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    public function getVideoUrlAttribute()
+    {
+        return Storage::disk($this->video_file_disk)->url($this->video_file_path);
     }
 }

@@ -15,9 +15,9 @@ class GetClipsForDay implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $broadcaster;
+    public $broadcaster;
 
-    private $date;
+    public $date;
 
     public function __construct(Broadcaster $broadcaster, Carbon $date)
     {

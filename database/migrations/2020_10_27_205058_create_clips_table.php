@@ -23,10 +23,11 @@ class CreateClipsTable extends Migration
             $table->string('title');
             $table->integer('views_at_import');
             $table->integer('duration');
-            $table->string('thumbnail_medium');
-            $table->string('thumbnail_small');
-            $table->string('thumbnail_tiny');
+            $table->string('thumbnail_medium')->nullable();
+            $table->string('thumbnail_small')->nullable();
+            $table->string('thumbnail_tiny')->nullable();
             $table->string('video_file_path');
+            $table->string('video_file_disk');
             $table->timestamps();
             $table->foreign('curator_id')->references('id')->on('curators');
             $table->foreign('broadcaster_id')->references('id')->on('broadcasters');
