@@ -11,7 +11,7 @@ class ClipController extends Controller
     {
         $query = Clip::query()->with(['curator']);
 
-        if ($request->has('game')) {
+        if ($request->has('game') && strlen($request->input('game')) > 0) {
             $query->where('game', urldecode($request->input('game')));
         }
 
