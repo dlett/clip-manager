@@ -22,7 +22,8 @@ Route::get('/auth/callback', [LoginController::class, 'handleProviderCallback'])
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/clips', [ClipController::class, 'index'])->name('home');
     Route::get('/clips/{clip}', [ClipController::class, 'show'])->name('clip.show');
-    Route::get('/curator/{curator}', [CuratorController::class, 'show'])->name('curator.show');
+    Route::get('/curators', [CuratorController::class, 'index'])->name('curator.list');
+    Route::get('/curators/{curator}', [CuratorController::class, 'show'])->name('curator.show');
 });
 
 Route::get('/', function () {

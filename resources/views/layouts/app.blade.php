@@ -16,7 +16,7 @@
                     <a class="nav-link active" href="{{ route('home') }}">Clips</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Search</a>
+                    <a class="nav-link" href="{{ route('curator.list') }}">Curators</a>
                 </li>
             </ul>
         </div>
