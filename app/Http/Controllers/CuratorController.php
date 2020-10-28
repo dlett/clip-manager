@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Clip;
 use App\Models\Curator;
 use Illuminate\Http\Request;
 
@@ -14,9 +15,11 @@ class CuratorController
         return view('curators', compact('curators'));
     }
 
-    public function show(Curator $curator)
+    public function show(Curator $curator, Request $request)
     {
-        $clips = $curator->clips()->paginate();
+        $clips = Clip::indexQuery(collect($request->all()), $curator)
+            ->paginate($request->input('per_page'))
+            ->appends(request()->except('page'));
 
         return view('curator', compact('curator', 'clips'));
     }

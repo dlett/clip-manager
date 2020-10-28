@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class Clip extends Model
@@ -45,6 +47,27 @@ class Clip extends Model
     public function getVideoUrlAttribute()
     {
         return Storage::disk($this->video_file_disk)->url($this->video_file_path);
+    }
+
+    public static function indexQuery(Collection $request, Curator $curator = null): Builder
+    {
+        $query = static::query()->with(['curator'])->orderBy('created_at', 'desc');
+
+        if ($curator) {
+            $query->where('curator_id', $curator->id);
+        }
+
+        $game = $request->get('game');
+        if (is_string($game) && strlen($game) > 0) {
+            $query->where('game', $game);
+        }
+
+        $title = $request->get('title');
+        if (is_string($title) && strlen($title) > 0) {
+            $query->where('title', 'LIKE', "%{$title}%");
+        }
+
+        return $query;
     }
 
     public static function getGames()
