@@ -2,8 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Jobs\RefreshToken;
 use App\Models\User;
 use Carbon\Carbon;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\Response;
 
 class ClipRepository extends AbstractTwitchRepository
 {
@@ -20,24 +23,32 @@ class ClipRepository extends AbstractTwitchRepository
 
     public function getClips($broadcasterId, Carbon $startAt, Carbon $endAt, $cursor = null)
     {
-        $query = [
-            'broadcaster_id' => $broadcasterId,
-            'first' => 100,
-            'started_at' => $startAt->toRfc3339String(),
-            'ended_at' => $endAt->toRfc3339String(),
-        ];
+        try {
+            $query = [
+                'broadcaster_id' => $broadcasterId,
+                'first'          => 100,
+                'started_at'     => $startAt->toRfc3339String(),
+                'ended_at'       => $endAt->toRfc3339String(),
+            ];
 
-        if ($cursor) {
-            $query['after'] = $cursor;
+            if ($cursor) {
+                $query['after'] = $cursor;
+            }
+
+            $response = $this->client()->get(self::CLIP_INDEX_URI, [
+                'query'   => $query,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . User::first()->token,
+                ]
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (ClientException $exception) {
+            if ($exception->getResponse()->getStatusCode() === Response::HTTP_UNAUTHORIZED) {
+                dispatch(new RefreshToken(User::first()));
+                $this->getClips($broadcasterId, $startAt, $endAt, $cursor);
+            }
+            throw $exception;
         }
-
-        $response = $this->client()->get(self::CLIP_INDEX_URI, [
-            'query' => $query,
-            'headers' => [
-                'Authorization' => 'Bearer ' . User::first()->token,
-            ]
-        ]);
-
-        return json_decode($response->getBody()->getContents(), true);
     }
 }
