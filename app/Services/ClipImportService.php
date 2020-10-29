@@ -57,6 +57,10 @@ class ClipImportService
         }
 
         foreach ($page['data'] ?? [] as $clip) {
+            if (Clip::query()->where('slug', $clip['id'])->exists()) {
+                continue;
+            }
+
             dispatch(new SaveClip($broadcaster, $clip));
         }
     }
