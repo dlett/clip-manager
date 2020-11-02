@@ -138,7 +138,12 @@ class ClipImportService
     public function moveThumbnailToStorage(string $url): ?string
     {
         try {
-            $response = (new Client())->get($url);
+            $response = (new Client([
+                'headers' => ['Connection' => 'close'],
+                CURLOPT_FORBID_REUSE => true,
+                CURLOPT_FRESH_CONNECT => true
+            ]))->get($url);
+
             $name = substr($url, strrpos($url, '/') + 1);
             $path = sprintf('%s%s', self::THUMBNAILS_DIRECTORY, $name);
             $contents = $response->getBody()->getContents();
