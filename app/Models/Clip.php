@@ -51,7 +51,7 @@ class Clip extends Model
 
     public static function indexQuery(Collection $request, Curator $curator = null): Builder
     {
-        $query = static::query()->with(['curator'])->orderBy('created_at', 'desc');
+        $query = static::query()->with(['curator', 'broadcaster'])->orderBy('created_at', 'desc');
 
         if ($curator) {
             $query->where('curator_id', $curator->id);
