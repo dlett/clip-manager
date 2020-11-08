@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use App\Repositories\TokenRepository;
+use App\Services\TokenService;
 
 class RefreshToken
 {
@@ -14,13 +14,8 @@ class RefreshToken
         $this->user = $user;
     }
 
-    public function handle(TokenRepository $tokenRepository)
+    public function handle(TokenService $tokenService)
     {
-        $newToken = $tokenRepository->refreshToken($this->user->refresh_token);
-
-        $this->user->update([
-            'access_token' => $newToken['access_token'],
-            'refresh_token' => $newToken['refresh_token'],
-        ]);
+        $tokenService->refreshToken($this->user);
     }
 }
