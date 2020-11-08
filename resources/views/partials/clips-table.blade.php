@@ -35,6 +35,7 @@
     <tr>
         <th>Thumbnail</th>
         <th>Title</th>
+        <th>Broadcaster</th>
         <th>Curator</th>
         <th>Game</th>
         <th>Created</th>
@@ -47,6 +48,12 @@
                     src="{{ is_null($clip->thumbnail_tiny) ? 'https://via.placeholder.com/86x45?text=No%20Image' : $clip->thumbnail_tiny }}"
                     alt="Thumbnail for {{ $clip->title }}"></a></td>
             <td class="align-middle"><a href="{{ route('clip.show', $clip) }}">{{ $clip->title }}</a></td>
+            <td class="align-middle">
+                @if(Route::currentRouteName() === 'home')
+                    <img src="{{ $clip->broadcaster->logo_url }}" height="32">
+                @endif
+                {{ $clip->broadcaster->display_name }}
+            </td>
             <td class="align-middle">
                 @if(Route::currentRouteName() === 'home')
                     <img src="{{ $clip->curator->logo_url }}" height="32">
