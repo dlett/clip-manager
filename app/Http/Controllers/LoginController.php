@@ -21,7 +21,7 @@ class LoginController extends Controller
 
     public function redirectToProvider(): RedirectResponse
     {
-        return $this->socialiteFactory->driver('twitch')->redirect();
+        return $this->socialiteFactory->driver('twitch')->scopes(['moderation:read'])->redirect();
     }
 
     public function handleProviderCallback()
